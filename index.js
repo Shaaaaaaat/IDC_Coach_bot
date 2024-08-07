@@ -13,7 +13,7 @@ const AIRTABLE_PLACES = process.env.AIRTABLE_PLACES_TABLE_ID;
 const AIRTABLE_SMS = process.env.AIRTABLE_SMS_ID;
 const AIRTABLE_PNL = process.env.AIRTABLE_PNL_ID;
 
-const SECONDARY_CHAT_ID = process.env.SECONDARY_CHAT_ID; // Идентификатор стороннего чата
+const SECONDARY_CHAT = process.env.SECONDARY_CHAT_ID; // Идентификатор стороннего чата
 
 const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`;
 const airtablePlacesUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_PLACES}`;
@@ -651,7 +651,7 @@ const initBot = async () => {
 
     // Отправляем сообщение в сторонний чат
     try {
-      await bot.api.sendMessage(SECONDARY_CHAT_ID, responseText.trim());
+      await bot.api.sendMessage(SECONDARY_CHAT, responseText.trim());
       console.log("Message sent to secondary chat");
     } catch (err) {
       console.error("Error sending message to secondary chat:", err);
