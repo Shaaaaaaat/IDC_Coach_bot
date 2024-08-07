@@ -13,6 +13,8 @@ const AIRTABLE_PLACES = process.env.AIRTABLE_PLACES_TABLE_ID;
 const AIRTABLE_SMS = process.env.AIRTABLE_SMS_ID;
 const AIRTABLE_PNL = process.env.AIRTABLE_PNL_ID;
 
+const SECONDARY_CHAT_ID = process.env.SECONDARY_CHAT_ID; // Идентификатор стороннего чата
+
 const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`;
 const airtablePlacesUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_PLACES}`;
 const airtableMessagesUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_SMS}`;
@@ -36,6 +38,10 @@ let selectedLocation = {};
 let pnlDataCache = {};
 
 const BUTTONS_PER_PAGE = 7;
+
+// Очередь сообщений
+const messageQueue = [];
+let isProcessingQueue = false;
 
 const fetchDataFromAirtable = async (username, url) => {
   let records = [];
@@ -326,6 +332,53 @@ const createPnlDateKeyboard = () => {
   return keyboard;
 };
 
+// Обработка очереди сообщений
+const processQueue = async () => {
+  if (isProcessingQueue) return;
+  isProcessingQueue = true;
+
+  while (messageQueue.length > 0) {
+    const message = messageQueue.shift();
+    await processMessage(message);
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+  }
+
+  isProcessingQueue = false;
+};
+
+const processMessage = async (message) => {
+  const { ctx, responseText, date, format, location, selectedCounts } = message;
+
+  await sendDataToAirtable({
+    Date: date,
+    Format: format,
+    Location: location,
+    "Selected Buttons": selectedCounts.join(", "),
+  });
+
+  if (format === "ds") {
+    const maxCount = Math.max(...Object.values(buttonCounters));
+    const messages = [];
+
+    for (let i = 1; i <= maxCount; i++) {
+      const people = Object.keys(buttonCounters).filter(
+        (key) => buttonCounters[key] >= i
+      );
+      if (people.length > 0) {
+        messages.push(
+          `${ctx.from.username} / ${date} / ${format} // ${people.join(", ")}`
+        );
+      }
+    }
+
+    messages.reverse();
+
+    await sendMessagesWithPause(messages);
+  } else {
+    await sendMessageToAirtable(responseText);
+  }
+};
+
 const initBot = async () => {
   bot.command("start", async (ctx) => {
     const username = ctx.from.username;
@@ -596,34 +649,24 @@ const initBot = async () => {
       console.error("Error sending message:", err);
     }
 
-    await sendDataToAirtable({
-      Date: date,
-      Format: format,
-      Location: location,
-      "Selected Buttons": selectedCounts.join(", "),
-    });
-
-    if (format === "ds") {
-      const maxCount = Math.max(...Object.values(buttonCounters));
-      const messages = [];
-
-      for (let i = 1; i <= maxCount; i++) {
-        const people = Object.keys(buttonCounters).filter(
-          (key) => buttonCounters[key] >= i
-        );
-        if (people.length > 0) {
-          messages.push(
-            `${username} / ${date} / ${format} // ${people.join(", ")}`
-          );
-        }
-      }
-
-      messages.reverse();
-
-      await sendMessagesWithPause(messages);
-    } else {
-      await sendMessageToAirtable(responseText);
+    // Отправляем сообщение в сторонний чат
+    try {
+      await bot.api.sendMessage(SECONDARY_CHAT_ID, responseText.trim());
+      console.log("Message sent to secondary chat");
+    } catch (err) {
+      console.error("Error sending message to secondary chat:", err);
     }
+
+    // Добавляем сообщение в очередь
+    messageQueue.push({
+      ctx,
+      responseText,
+      date,
+      format,
+      location,
+      selectedCounts,
+    });
+    processQueue();
 
     try {
       await ctx.answerCallbackQuery("Ваш выбор был сохранен");
@@ -733,8 +776,7 @@ const initBot = async () => {
 
       const currentSelection = `*Введенные данные:*\n📅 Дата: ${
         selectedDate[userId] || "---"
-      }\n
-🤸 Тип тренировки: ${selectedFormat[userId] || "---"}\n📍 Место: ${
+      }\n🤸 Тип тренировки: ${selectedFormat[userId] || "---"}\n📍 Место: ${
         selectedLocation[userId] || "---"
       }\n👥 Люди: ---`;
 
