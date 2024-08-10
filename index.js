@@ -13,7 +13,7 @@ const AIRTABLE_PLACES = process.env.AIRTABLE_PLACES_TABLE_ID;
 const AIRTABLE_SMS = process.env.AIRTABLE_SMS_ID;
 const AIRTABLE_PNL = process.env.AIRTABLE_PNL_ID;
 
-const SECONDARY_CHAT = Number(process.env.SECONDARY_CHAT_ID); // Идентификатор стороннего чата
+const SECONDARY_CHAT = -1002203093713; // Идентификатор стороннего чата
 
 const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`;
 const airtablePlacesUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_PLACES}`;
