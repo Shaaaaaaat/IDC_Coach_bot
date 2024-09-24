@@ -26,6 +26,7 @@ const allowedUsers = [
   "kapitanstar_coach",
   "RomanGribanov",
   "Gshakhnazarov",
+  "dima_dubinin",
 ];
 
 let buttonTexts = [];
