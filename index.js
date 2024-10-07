@@ -194,30 +194,30 @@ const createLocationKeyboard = (locations) => {
   return keyboard;
 };
 
-// const sendDataToAirtable = async (data) => {
-//   console.log("Данные перед отправкой в Airtable:", data);  // Лог данных
-//   try {
-//     await axios.post(
-//       airtableMessagesUrl,
-//       {
-//         records: [
-//           {
-//             fields: data,
-//           },
-//         ],
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${AIRTABLE_API}`,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//     console.log("Данные успешно отправлены в Airtable");
-//   } catch (error) {
-//     console.error("Error sending data to Airtable:", error);
-//   }
-// };
+const sendDataToAirtable = async (data) => {
+  console.log("Данные перед отправкой в Airtable:", data);  // Лог данных
+  try {
+    await axios.post(
+      airtableMessagesUrl,
+      {
+        records: [
+          {
+            fields: data,
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${AIRTABLE_API}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("Данные успешно отправлены в Airtable");
+  } catch (error) {
+    console.error("Error sending data to Airtable:", error);
+  }
+};
 
 const sendMessageToAirtable = async (message) => {
   try {
@@ -360,13 +360,22 @@ const processMessage = async (message) => {
   const { ctx, responseText, date, format, location, selectedCounts } = message;
   const userId = ctx.from.id;
 
-  // await sendDataToAirtable({
-  //   Date: date,
-  //   Format: format,
-  //   Location: location,
-  //   "Selected Buttons": selectedCounts.join(", "),
-  // });
+  // Логируем перед отправкой данных
+  console.log("Preparing to send data to Airtable");
+  console.log("User ID:", userId);
+  console.log("Date:", date);
+  console.log("Format:", format);
+  console.log("Location:", location);
+  console.log("Selected counts:", selectedCounts);
 
+  await sendDataToAirtable({
+    Date: date,
+    Format: format,
+    Location: location,
+    "Selected Buttons": selectedCounts.join(", "),
+  });
+
+  console.log("Data sent to Airtable successfully");
   if (format === "ds") {
     const maxCount = Math.max(
       ...Object.values(userStates[userId].buttonCounters)
