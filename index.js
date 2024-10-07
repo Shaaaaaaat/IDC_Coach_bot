@@ -426,6 +426,20 @@ const initBot = async () => {
 
   bot.callbackQuery(/^\d{2}\.\d{2}$/, async (ctx) => {
     const userId = ctx.from.id;
+
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const date = ctx.match[0];
 
     userStates[userId].selectedDate = date;
@@ -442,6 +456,19 @@ const initBot = async () => {
 
   bot.callbackQuery(/^(ds|group|personal)$/, async (ctx) => {
     const userId = ctx.from.id;
+
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const format = ctx.match[0];
 
     userStates[userId].selectedFormat = format;
@@ -502,6 +529,20 @@ const initBot = async () => {
 
   bot.callbackQuery(/^location_(.+)$/, async (ctx) => {
     const userId = ctx.from.id;
+
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const location = ctx.match[1];
 
     userStates[userId].selectedLocation = location;
@@ -541,6 +582,19 @@ const initBot = async () => {
     /^((?!done|prev_|next_|back_to_|minus_|refresh_dates|view_pnl|pnl_date_|detailed_breakdown).)+$/,
     async (ctx) => {
       const userId = ctx.from.id;
+      // Инициализация состояния пользователя, если оно отсутствует
+      if (!userStates[userId]) {
+        userStates[userId] = {
+          buttonTexts: [],
+          buttonStates: {},
+          buttonCounters: {},
+          currentPage: 0,
+          selectedDate: "---",
+          selectedFormat: "---",
+          selectedLocation: "---",
+          pnlDataCache: {},
+        };
+      }
       const text = ctx.match[0];
       console.log(`Button pressed by user ${userId}:`, text);
 
@@ -580,6 +634,19 @@ const initBot = async () => {
 
   bot.callbackQuery(/^minus_(.+)$/, async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const text = ctx.match[1];
     console.log(`Minus button pressed by user ${userId}:`, text);
 
@@ -606,6 +673,19 @@ const initBot = async () => {
 
   bot.callbackQuery(/prev_(\d+)/, async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const page = parseInt(ctx.match[1], 10) - 1;
     userStates[userId].currentPage = page;
     console.log(`User ${userId} navigated to previous page ${page}`);
@@ -623,6 +703,19 @@ const initBot = async () => {
 
   bot.callbackQuery(/next_(\d+)/, async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const page = parseInt(ctx.match[1], 10) + 1;
     userStates[userId].currentPage = page;
     console.log(`User ${userId} navigated to next page ${page}`);
@@ -640,6 +733,19 @@ const initBot = async () => {
 
   bot.callbackQuery("done", async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const username = ctx.from.username;
     console.log("Done button pressed");
 
@@ -703,6 +809,18 @@ const initBot = async () => {
     // Сбрасываем состояние пользователя
     resetUserState(userId);
 
+    // Инициализация состояния пользователя после сброса
+    userStates[userId] = {
+      buttonTexts: [],
+      buttonStates: {},
+      buttonCounters: {},
+      currentPage: 0,
+      selectedDate: "---",
+      selectedFormat: "---",
+      selectedLocation: "---",
+      pnlDataCache: {},
+    };
+
     try {
       await ctx.answerCallbackQuery("Ваш выбор был сохранен");
     } catch (err) {
@@ -714,6 +832,19 @@ const initBot = async () => {
 
   bot.callbackQuery("back_to_start", async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const currentSelection = `*Введенные данные:*\n📅 Дата: ${
       userStates[userId].selectedDate || "---"
     }\n🤸 Тип тренировки: ${
@@ -738,6 +869,19 @@ const initBot = async () => {
 
   bot.callbackQuery("back_to_dates", async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const currentSelection = `*Введенные данные:*\n📅 Дата: ${
       userStates[userId].selectedDate || "---"
     }\n🤸 Тип тренировки: ${
@@ -762,6 +906,19 @@ const initBot = async () => {
 
   bot.callbackQuery("back_to_format", async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const currentSelection = `*Введенные данные:*\n📅 Дата: ${
       userStates[userId].selectedDate || "---"
     }\n🤸 Тип тренировки: ${
@@ -786,6 +943,19 @@ const initBot = async () => {
 
   bot.callbackQuery("back_to_location", async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const format = userStates[userId].selectedFormat;
 
     if (format === "ds") {
@@ -840,6 +1010,19 @@ const initBot = async () => {
     await ctx.answerCallbackQuery();
 
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     userStates[userId].selectedDate = "---";
     userStates[userId].selectedFormat = "---";
     userStates[userId].selectedLocation = "---";
@@ -875,6 +1058,19 @@ const initBot = async () => {
 
   bot.callbackQuery(/^pnl_date_(\d{2}\.\d{2})$/, async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const date = ctx.match[1];
     const username = ctx.from.username;
 
@@ -919,6 +1115,19 @@ const initBot = async () => {
 
   bot.callbackQuery("detailed_breakdown", async (ctx) => {
     const userId = ctx.from.id;
+    // Инициализация состояния пользователя, если оно отсутствует
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
     const username = ctx.from.username;
     const pnlData = userStates[userId].pnlDataCache;
 
