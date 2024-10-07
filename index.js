@@ -215,7 +215,12 @@ const sendDataToAirtable = async (data) => {
     );
     console.log("Данные успешно отправлены в Airtable");
   } catch (error) {
-    console.error("Error sending data to Airtable:", error);
+    // Логируем полную ошибку
+    if (error.response) {
+      console.error("Ошибка при отправке данных в Airtable:", JSON.stringify(error.response.data, null, 2));
+    } else {
+      console.error("Ошибка при отправке данных в Airtable:", error.message);
+    }
   }
 };
 
