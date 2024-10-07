@@ -79,6 +79,12 @@ const resetUserState = (userId) => {
 
 const createKeyboard = (page, format, userId) => {
   const userState = userStates[userId];
+
+  if (!userState || userState.buttonTexts.length === 0) {
+    console.log("Данные для кнопок не загружены!");
+    return { keyboard: new InlineKeyboard(), currentSelection: "Нет данных" };
+  }
+
   const keyboard = new InlineKeyboard();
   const start = page * BUTTONS_PER_PAGE;
   const end = start + BUTTONS_PER_PAGE;
@@ -394,17 +400,18 @@ const initBot = async () => {
       return;
     }
 
-    // Инициализация состояния пользователя
-    userStates[userId] = {
-      buttonTexts: [],
-      buttonStates: {},
-      buttonCounters: {},
-      currentPage: 0,
-      selectedDate: "---",
-      selectedFormat: "---",
-      selectedLocation: "---",
-      pnlDataCache: {},
-    };
+    if (!userStates[userId]) {
+      userStates[userId] = {
+        buttonTexts: [],
+        buttonStates: {},
+        buttonCounters: {},
+        currentPage: 0,
+        selectedDate: "---",
+        selectedFormat: "---",
+        selectedLocation: "---",
+        pnlDataCache: {},
+      };
+    }
 
     const currentSelection = `*Введенные данные:*\n📅 Дата: ${userStates[userId].selectedDate}\n🤸 Тип тренировки: ${userStates[userId].selectedFormat}\n📍 Место: ${userStates[userId].selectedLocation}\n👥 Люди: ---`;
 
@@ -484,6 +491,11 @@ const initBot = async () => {
       console.log("Button texts from Airtable:", buttonTexts);
 
       userStates[userId].buttonTexts.sort((a, b) => a.localeCompare(b));
+
+      // Если здесь нет данных, значит произошла ошибка при подгрузке данных
+      if (userStates[userId].buttonTexts.length === 0) {
+        console.log("Клиенты не загружены!");
+      }
 
       userStates[userId].buttonStates = userStates[userId].buttonTexts.reduce(
         (acc, text) => {
