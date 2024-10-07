@@ -194,35 +194,35 @@ const createLocationKeyboard = (locations) => {
   return keyboard;
 };
 
-const sendDataToAirtable = async (data) => {
-  console.log("Данные перед отправкой в Airtable:", data);  // Лог данных
-  try {
-    await axios.post(
-      airtableMessagesUrl,
-      {
-        records: [
-          {
-            fields: data,
-          },
-        ],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${AIRTABLE_API}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    console.log("Данные успешно отправлены в Airtable");
-  } catch (error) {
-    // Логируем полную ошибку
-    if (error.response) {
-      console.error("Ошибка при отправке данных в Airtable:", JSON.stringify(error.response.data, null, 2));
-    } else {
-      console.error("Ошибка при отправке данных в Airtable:", error.message);
-    }
-  }
-};
+// const sendDataToAirtable = async (data) => {
+//   console.log("Данные перед отправкой в Airtable:", data);  // Лог данных
+//   try {
+//     await axios.post(
+//       airtableMessagesUrl,
+//       {
+//         records: [
+//           {
+//             fields: data,
+//           },
+//         ],
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${AIRTABLE_API}`,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+//     console.log("Данные успешно отправлены в Airtable");
+//   } catch (error) {
+//     // Логируем полную ошибку
+//     if (error.response) {
+//       console.error("Ошибка при отправке данных в Airtable:", JSON.stringify(error.response.data, null, 2));
+//     } else {
+//       console.error("Ошибка при отправке данных в Airtable:", error.message);
+//     }
+//   }
+// };
 
 const sendMessageToAirtable = async (message) => {
   try {
@@ -373,12 +373,12 @@ const processMessage = async (message) => {
   console.log("Location:", location);
   console.log("Selected counts:", selectedCounts);
 
-  await sendDataToAirtable({
-    Date: date,
-    Format: format,
-    Location: location,
-    "Selected Buttons": selectedCounts.join(", "),
-  });
+  // await sendDataToAirtable({
+  //   Date: date,
+  //   Format: format,
+  //   Location: location,
+  //   "Selected Buttons": selectedCounts.join(", "),
+  // });
 
   console.log("Data sent to Airtable successfully");
   if (format === "ds") {
