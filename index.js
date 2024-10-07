@@ -195,6 +195,7 @@ const createLocationKeyboard = (locations) => {
 };
 
 const sendDataToAirtable = async (data) => {
+  console.log("Данные перед отправкой в Airtable:", data);  // Лог данных
   try {
     await axios.post(
       airtableMessagesUrl,
@@ -212,6 +213,7 @@ const sendDataToAirtable = async (data) => {
         },
       }
     );
+    console.log("Данные успешно отправлены в Airtable");
   } catch (error) {
     console.error("Error sending data to Airtable:", error);
   }
