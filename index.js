@@ -488,7 +488,7 @@ const initBot = async () => {
       userStates[userId].buttonTexts = (
         await fetchDataFromAirtable(ctx.from.username, airtableUrl)
       ).map((record) => record.name);
-      console.log("Button texts from Airtable:", buttonTexts);
+      console.log("Button texts from Airtable:", userStates[userId].buttonTexts);
 
       userStates[userId].buttonTexts.sort((a, b) => a.localeCompare(b));
 
@@ -564,7 +564,7 @@ const initBot = async () => {
     userStates[userId].buttonTexts = (
       await fetchDataFromAirtable(ctx.from.username, airtableUrl)
     ).map((record) => record.name);
-    console.log("Button texts from Airtable:", buttonTexts);
+    console.log("Button texts from Airtable:", userStates[userId].buttonTexts);
 
     userStates[userId].buttonTexts.sort((a, b) => a.localeCompare(b));
 
