@@ -255,7 +255,7 @@ const sendMessageToAirtable = async (message) => {
 const sendMessagesWithPause = async (messages) => {
   for (const message of messages) {
     await sendMessageToAirtable(message);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 };
 
