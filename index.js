@@ -27,6 +27,7 @@ const allowedUsers = [
   "RomanGribanov",
   "Gshakhnazarov",
   "dima_dubinin",
+  "e_katrin_al",
 ];
 
 let userStates = {};
