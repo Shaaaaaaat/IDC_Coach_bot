@@ -24,7 +24,6 @@ const allowedUsers = [
   "Lokatororator",
   "Shaaaaaaat",
   "kapitanstar_coach",
-  "RomanGribanov",
   "Gshakhnazarov",
   "dima_dubinin",
   "e_katrin_al",
@@ -255,7 +254,7 @@ const sendMessageToAirtable = async (message) => {
 const sendMessagesWithPause = async (messages) => {
   for (const message of messages) {
     await sendMessageToAirtable(message);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 10000));
   }
 };
 
